@@ -5,8 +5,32 @@
 		<link rel="icon" href="./favicon.svg" />
 		<meta name="viewport" content="width=device-width" />
 		<meta http-equiv="content-security-policy" content="">
+		<link rel="modulepreload" href="./_app/immutable/entry/start.46f42b25.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.3758c5f4.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/singletons.ed890b97.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/index.b9ab01ee.js">
+		<link rel="modulepreload" href="./_app/immutable/chunks/paths.ac8abce8.js">
+		<link rel="modulepreload" href="./_app/immutable/entry/app.0c0a04bc.js">
 	</head>
 	<body class="sm:dark:bg-[#0f0f0f] dark:bg-black bg-white sm:bg-white" data-theme="secret">
-		<div style="display: contents" class="h-full overflow-hidden"></div>
+		<div style="display: contents" class="h-full overflow-hidden">
+			<script>
+				{
+					__sveltekit_1gnnbl = {
+						base: new URL(".", location).pathname.slice(0, -1),
+						env: {}
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("./_app/immutable/entry/start.46f42b25.js"),
+						import("./_app/immutable/entry/app.0c0a04bc.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
 	</body>
 </html>

@@ -48,7 +48,6 @@
 			<li>Swap fees consist of fixed and variable pricing, enabling the AMM to impose higher fees during periods of heightened market volatility</li></ul>
 	</div>
 	<div class="text-center">
-		<h2 class="font-bold"></h2>
 		<!-- Animated Logo -->
 		<figure>
 			<section class="img-bg" />

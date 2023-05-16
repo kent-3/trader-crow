@@ -32,7 +32,7 @@ export async function executeAddLiquidity(
     amount_x_min: (0.95 * amountX).toFixed(0),
     amount_y_min: (0.95 * amountY).toFixed(0),
     active_id_desired: 2**23,
-    id_slippage: 100,
+    id_slippage: 10,
     delta_ids: [-5,-4,-3,-2,-1,0,1,2,3,4,5],
     distribution_x: [
       0, 0, 0, 0, 0, 0.090909, 0.181818, 0.181818, 0.181818, 0.181818, 0.181818

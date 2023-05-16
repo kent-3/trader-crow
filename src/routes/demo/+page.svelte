@@ -40,7 +40,7 @@
           Go to the
           <a href="{base}/trade" class="btn btn-sm px-1 py-0 variant-ghost-primary">
             Trade
-          </a> page. The UI isn't fully ready yet, but swaps work in both directions!
+          </a> page. The UI isn't fully ready yet, but swaps work in both directions! There is some liquidity in the sSCRT x SILK pool. Try swapping 1 sSCRT for SILK and vice versa.
         </p>
       </div>
     </div>

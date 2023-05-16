@@ -359,7 +359,8 @@
 </div>
 
 <style lang="postcss">
+    
 	.selected {
-		@apply variant-ghost-primary;
+		@apply bg-primary-500/20 dark:bg-primary-500/20 ring-[1px] ring-primary-500 dark:ring-primary-500 ring-inset;
 	}
 </style>

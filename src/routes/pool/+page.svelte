@@ -22,7 +22,7 @@
 		</a>
 	</div>
 
-	<div class="table-container !w-3/4">
+	<div class="table-container !lg:w-3/4">
 		<table class="table table-hover">
 			<thead>
 				<tr>

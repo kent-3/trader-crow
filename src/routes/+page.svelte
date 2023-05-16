@@ -7,8 +7,8 @@
 </script>
 
 {#if ready}
-<div in:fly="{{ x: 100, duration: 1000 }}" class="container h-full mx-auto flex justify-center space-x-24 items-center">
-	<div class="inline-block space-y-2 w-2/3">
+<div in:fly="{{ x: 100, duration: 1000 }}" class="container h-full mx-auto flex md:flex-row flex-col-reverse justify-center md:space-x-24 space-y-12 items-center">
+	<div class="block space-y-4 md:w-2/3 w-full p-6">
 		<h1 class="font-semibold">Introduction</h1>
 		<p>This project presents an efficient Automated Market Maker (AMM) protocol, modeled after the Liquidity Book protocol used by Trader Joe (
 			<a href="https://docs.traderjoexyz.com/concepts/concentrated-liquidity" 
@@ -18,7 +18,7 @@
 			>
 			  Liquidity Book docs
 			</a>). The protocol retains the key features of its predecessor, such as: </p>
-		<ul class="list-disc">
+		<ul class="list-disc ml-4">
 			<li class="list-item">
 				<strong> No Slippage: </strong> 
 				<span> Enabling token swaps with zero slippage within designated bins </span>
@@ -36,9 +36,9 @@
 				<span> Liquidity providers can customize their liquidity distributions based on their strategy </span>
 			</li>
 		</ul>
-		<h2 class="font-semibold">Liquidity Book vs Uniswap V3</h2>
+		<h2 class="font-semibold sm:max-w-none max-w-[70%]">Liquidity Book vs Uniswap V3</h2>
 		<p>Both Liquidity Book and Uniswap V3 are concentrated liquidity AMMs with some subtle differences:</p>
-		<ul class="list-disc">
+		<ul class="list-disc ml-4">
 			<li>Price ranges are divided into bins instead of ticks</li>
 			<li>Bins employ a constant sum invariant instead of constant product</li>
 			<li>Bin steps can exceed 1 basis point</li>

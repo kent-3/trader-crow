@@ -126,7 +126,7 @@
     
 </script>
 
-<div in:fly="{{ x: 100, duration: 500 }}" class="flex xl:flex-row flex-col p-4 h-full mx-auto xl:justify-even justify-center xl:items-start items-center gap-6">
+<div in:fly="{{ x: 100, duration: 500 }}" class="flex lg:flex-row flex-col p-4 h-full mx-auto xl:justify-even justify-center xl:items-start items-center gap-6">
 	<!-- <h2 class="font-semibold !text-3xl self-center">Manage Liquidity</h2> -->
     <div class="card variant-ghost-surface xl:w-[49%] w-full h-full px-8 py-6 items-center space-y-6">
         <h2 class="font-semibold !text-3xl text-center">Manage Liquidity</h2> 
@@ -165,9 +165,9 @@
                         <div class="input-group-shim font-normal text-sm !justify-center">SILK</div>
                     </div>
                 </div>
-                <div class="space-y-2">
+                <div class="space-y-4">
                     <h2 class="!text-xl !font-semibold">Choose Liquidity Shape</h2>
-                    <div class="flex flex-wrap justify-evenly gap-y-2">
+                    <div class="flex flex-wrap justify-evenly gap-y-4">
                         <button class="btn variant-ringed-surface card-hover p-2" class:selected="{shape === 0}" on:click={()=>shape=0}>
                             <div class="flex flex-col items-center">
                                 <svg width="142" height="56" viewBox="0 0 142 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -243,7 +243,7 @@
                     flex="flex"
                     rounded=""
                     border="border-[1px] border-surface-500 p-1"
-                    padding="py-1 px-4"
+                    padding="py-1 sm:px-4 px-2"
                     spacing="space-x-1"
                     class="font-heading-token font-bold"
                     >
@@ -258,7 +258,7 @@
                 {#if tabSetBy == 0}
                 <div class="flex flex-col space-y-4">
                     <DoubleRangeSlider bind:start bind:end/>
-                    <div class="grid grid-cols-[minmax(0,_1fr)_minmax(0,_1fr)_90px] gap-2">
+                    <div class="grid sm:grid-cols-[minmax(0,_1fr)_minmax(0,_1fr)_90px] grid-rows-[minmax(0,_1fr)_minmax(0,_1fr)_90px] gap-2">
                         <div class="flex flex-col justify-start space-y-2">
                             <p>Min Price:</p>
                             <div class="input-group input-group-divider grid-cols-[1fr_105px] !bg-surface-50-900-token font-heading-token text-secondary-600-300-token font-bold">
@@ -286,7 +286,7 @@
                     </button>
                 </div>
                 {:else if tabSetBy == 1}
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid sm:grid-cols-2 grid-cols-1 gap-2">
                     <div class="flex flex-col justify-start space-y-2">
                         <p>Target Price:</p>
                         <div class="input-group input-group-divider grid-cols-[minmax(0,_1fr)_105px] !bg-surface-50-900-token font-heading-token text-secondary-600-300-token font-bold">
@@ -295,7 +295,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col justify-start space-y-2">
-                        <p>Radius (number of bins):</p>
+                        <p>Radius:</p>
                         <input bind:value={binRadius} class="input !bg-surface-50-900-token font-heading-token text-secondary-600-300-token font-bold" type="number" name="" id="" />
                     </div>
                     <div class="flex flex-col justify-start space-y-2">

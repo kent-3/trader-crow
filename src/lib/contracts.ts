@@ -12,11 +12,11 @@ export interface Code {
 
 // Liquidity Book Contracts
 export const LB_FACTORY: Contract = {
-    address: 'secret1fl33lrslp9hecxmpfsdz6e0c49waqx6ctwu2dd',
+    address: 'secret1rulnrdpjxz6pcwfmenqxqfmw428lxtp4xs00fh',
     code_hash: '79b53e4bf420f1aa38cf66a5a209064129c402a2aa31674290eaaa022617ce0f'
 }
 export const LB_ROUTER: Contract = {
-    address: 'secret1z4y2ch589xd5ncdtlttcm9s9ggqn0zq82w0278',
+    address: 'secret10cz2nvw3tzjzvhwnw9m0hm484a9tunnhyttmpl',
     code_hash: '31c78840211a29b5502c80c3d306f87aa475f9b43601582efb73b6ff770e871b'
 }
 export const LB_PAIR_CODE: Code = {

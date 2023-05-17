@@ -8,22 +8,22 @@ import { tokenList } from './tokens'
  * @return BinId of the underlying bin.
  */
 export function getIdFromPrice(price: number, binStep: number): number {
-    return (
-        Math.trunc(Math.log(price) / Math.log(1 + binStep / 10_000)) + 8388608
-    )
+  return (
+    Math.trunc(Math.log(price) / Math.log(1 + binStep / 10_000)) + 8388608
+  )
 }
 
 export function compactAddress(longAddress: string): string {
-	const shortAddress = longAddress.substring(0, 6) + '...' + longAddress.substring(39)
-	return shortAddress
+  const shortAddress = longAddress.substring(0, 6) + '...' + longAddress.substring(39)
+  return shortAddress
 }
 
-export function getCodeHash(address: string){
-    const token = tokenList.find(it => it.address === address);
-    if (!token) throw new Error('No token found for address ' + address);
-    return token.codeHash;
+export function getCodeHash(address: string) {
+  const token = tokenList.find(it => it.address === address);
+  if (!token) throw new Error('No token found for address ' + address);
+  return token.codeHash;
 }
 
-export function fromLiteraltoEpoch(value: string){
-    return Date.parse(value) / 1000;
+export function fromLiteraltoEpoch(value: string) {
+  return Date.parse(value) / 1000;
 }

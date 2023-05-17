@@ -8,30 +8,8 @@ const SECRET_CHAIN_ID = chains['Secret Network'].chain_id
 const SECRET_LCD = chains['Secret Network'].lcd
 
 export function resetStores() {
-	isAccountAvailable.set(false)
-	keplrKey.set({
-		name: "",
-		algo: "",
-		pubKey: new Uint8Array,
-		address: new Uint8Array,
-		bech32Address: "",
-		isNanoLedger: false,
-		isKeystone: false
-	})
-	secretClient.set(new SecretNetworkClient({
-		url: SECRET_LCD,
-		chainId: SECRET_CHAIN_ID
-	}))
-	secretAddress.set("secret1...")
-	scrtBalance.set("🤫")
-	amberBalance.set("🤫")
-	viewingKeys.set(new Map<SecretAddress, string>)
-	balances.set(new Map<SecretAddress, number>)
-	console.log("stores reset")
-}
-
-export const isAccountAvailable: Writable<boolean> = writable(false)
-export const keplrKey: Writable<Key> = writable({
+  isAccountAvailable.set(false)
+  keplrKey.set({
     name: "",
     algo: "",
     pubKey: new Uint8Array,
@@ -39,12 +17,34 @@ export const keplrKey: Writable<Key> = writable({
     bech32Address: "",
     isNanoLedger: false,
     isKeystone: false
+  })
+  secretClient.set(new SecretNetworkClient({
+    url: SECRET_LCD,
+    chainId: SECRET_CHAIN_ID
+  }))
+  secretAddress.set("secret1...")
+  scrtBalance.set("🤫")
+  amberBalance.set("🤫")
+  viewingKeys.set(new Map<SecretAddress, string>)
+  balances.set(new Map<SecretAddress, number>)
+  console.log("stores reset")
+}
+
+export const isAccountAvailable: Writable<boolean> = writable(false)
+export const keplrKey: Writable<Key> = writable({
+  name: "",
+  algo: "",
+  pubKey: new Uint8Array,
+  address: new Uint8Array,
+  bech32Address: "",
+  isNanoLedger: false,
+  isKeystone: false
 })
 export const secretClient: Writable<SecretNetworkClient> = writable(
-    new SecretNetworkClient({
-        url: SECRET_LCD,
-        chainId: SECRET_CHAIN_ID
-}))
+  new SecretNetworkClient({
+    url: SECRET_LCD,
+    chainId: SECRET_CHAIN_ID
+  }))
 
 export const secretAddress: Writable<string> = writable("secret1...")
 export const scrtBalance: Writable<string> = writable('🤫')

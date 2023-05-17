@@ -1,4 +1,4 @@
-import type { CustomToken, NativeToken, TokenType } from '../misc_types'
+import type { TokenType } from '../misc_types'
 
 export interface LBPair {
   token_x: string;

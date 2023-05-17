@@ -54,8 +54,8 @@ export async function getAllowance(
     return allowance;
 
   } catch (error) {
-      console.log(error);
-      return "0";
+    console.log(error);
+    return "0";
   }
 
 }
@@ -81,8 +81,8 @@ export async function getBalance(
     return balance;
 
   } catch (error) {
-      console.log(error);
-      return "👀";
+    console.log(error);
+    return "👀";
   }
 
 }

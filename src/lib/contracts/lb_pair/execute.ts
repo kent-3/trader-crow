@@ -1,7 +1,7 @@
-import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 import type { SecretNetworkClient } from "secretjs";
 import type { CustomToken } from "../misc_types";
 import type * as LBPair from "./types"
+import { errorToast, responseToast } from '$lib/toasts';
 // import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 
 // const alert: ModalSettings = {
@@ -31,9 +31,9 @@ export async function executeAddLiquidity(
     amount_y: amountY.toFixed(0),
     amount_x_min: (0.95 * amountX).toFixed(0),
     amount_y_min: (0.95 * amountY).toFixed(0),
-    active_id_desired: 2**23,
+    active_id_desired: 2 ** 23,
     id_slippage: 10,
-    delta_ids: [-5,-4,-3,-2,-1,0,1,2,3,4,5],
+    delta_ids: [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5],
     distribution_x: [
       0, 0, 0, 0, 0, 0.090909, 0.181818, 0.181818, 0.181818, 0.181818, 0.181818
     ].map((el) => el * 1e18),
@@ -63,72 +63,9 @@ export async function executeAddLiquidity(
         gasLimit: 2_000_000,
       }
     );
-
-    // TODO move all this toast logic somewhere else and make it reusable
-    if (tx.code === 0) {
-      const t: ToastSettings = {
-        message: `
-        <h4>Transaction Success 🥳</h4>
-        <details class="text-sm">
-          <summary>Details</summary>
-          <dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-            <dt class="opacity-50">Tx Hash:</dt>
-            <a
-              href="https://secretnodes.com/pulsar/transactions/${tx.transactionHash}"
-              target="_blank"
-              rel="noreferrer"
-              class="!dark:text-success-500 !text-success-800"
-            >
-              <dd>View on block explorer</dd>
-            </a>
-            <dt class="opacity-50">Gas Used:</dt>
-            <dd>${tx.gasUsed.toLocaleString()}</dd>
-          </dl>
-          </details>
-        `,
-        background: 'variant-glass-surface ring-2 ring-inset dark:ring-success-700 ring-success-700',
-        autohide: false,
-        classes: '-translate-y-4 font-semibold',
-      };
-      toastStore.trigger(t)
-    } else {
-      console.log(tx.rawLog)
-			const t: ToastSettings = {
-				message: `
-				<h4>Transaction Failed</h4>
-				<details class="text-sm">
-					<summary>Details</summary>
-					<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-						<dt class="opacity-50">Raw Log:</dt>
-						<dd>${tx.rawLog}</dd>
-					</dl>
-				</details>
-				`,
-				background: 'variant-glass-surface ring-2 ring-inset ring-error-500',
-				autohide: false,
-				classes: '-translate-y-4 font-semibold',
-			};
-			toastStore.trigger(t)
-    }
+    responseToast(tx);
   } catch (error) {
-    const t: ToastSettings = {
-			message: `
-			<h4>Something went wrong 🤔</h4>
-			<details class="text-sm">
-				<summary>Details</summary>
-				<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-					<dt class="opacity-50">Action:</dt>
-					<dd>Execute</dd>
-					<dt class="opacity-50">Message:</dt>
-					<dd class="text-error-700 dark:text-error-500">${error.message}</dd>
-				</dl>
-			</details>
-			`,
-			background: 'variant-glass-surface ring-2 ring-inset ring-secondary-500',
-			autohide: false,
-			classes: '-translate-y-4 font-semibold',
-		};
-		toastStore.trigger(t)
+    errorToast(error);
   }
 }
 
@@ -171,72 +108,9 @@ export async function executeRemoveLiquidity(
         gasLimit: 2_000_000,
       }
     );
-
-    // TODO move all this toast logic somewhere else and make it reusable
-    if (tx.code === 0) {
-      const t: ToastSettings = {
-        message: `
-        <h4>Transaction Success 🥳</h4>
-        <details class="text-sm">
-          <summary>Details</summary>
-          <dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-            <dt class="opacity-50">Tx Hash:</dt>
-            <a
-              href="https://secretnodes.com/pulsar/transactions/${tx.transactionHash}"
-              target="_blank"
-              rel="noreferrer"
-              class="!dark:text-success-500 !text-success-800"
-            >
-              <dd>View on block explorer</dd>
-            </a>
-            <dt class="opacity-50">Gas Used:</dt>
-            <dd>${tx.gasUsed.toLocaleString()}</dd>
-          </dl>
-          </details>
-        `,
-        background: 'variant-glass-surface ring-2 ring-inset dark:ring-success-700 ring-success-700',
-        autohide: false,
-        classes: '-translate-y-4 font-semibold',
-      };
-      toastStore.trigger(t)
-    } else {
-      console.log(tx.rawLog)
-			const t: ToastSettings = {
-				message: `
-				<h4>Transaction Failed</h4>
-				<details class="text-sm">
-					<summary>Details</summary>
-					<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-						<dt class="opacity-50">Raw Log:</dt>
-						<dd>${tx.rawLog}</dd>
-					</dl>
-				</details>
-				`,
-				background: 'variant-glass-surface ring-2 ring-inset ring-error-500',
-				autohide: false,
-				classes: '-translate-y-4 font-semibold',
-			};
-			toastStore.trigger(t)
-    }
+    responseToast(tx);
   } catch (error) {
-    const t: ToastSettings = {
-			message: `
-			<h4>Something went wrong 🤔</h4>
-			<details class="text-sm">
-				<summary>Details</summary>
-				<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-					<dt class="opacity-50">Action:</dt>
-					<dd>Execute</dd>
-					<dt class="opacity-50">Message:</dt>
-					<dd class="text-error-700 dark:text-error-500">${error.message}</dd>
-				</dl>
-			</details>
-			`,
-			background: 'variant-glass-surface ring-2 ring-inset ring-secondary-500',
-			autohide: false,
-			classes: '-translate-y-4 font-semibold',
-		};
-		toastStore.trigger(t)
+    errorToast(error);
   }
 }
 
@@ -252,7 +126,7 @@ export async function executeSwap(
       swap_for_y: swapForY,
       to: client.address,
       amount_received: amount,
-      }
+    }
   }
 
   try {
@@ -269,70 +143,8 @@ export async function executeSwap(
       }
     );
 
-    // TODO move all this toast logic somewhere else and make it reusable
-    if (tx.code === 0) {
-      const t: ToastSettings = {
-        message: `
-        <h4>Transaction Success 🥳</h4>
-        <details class="text-sm">
-          <summary>Details</summary>
-          <dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-            <dt class="opacity-50">Tx Hash:</dt>
-            <a
-              href="https://secretnodes.com/pulsar/transactions/${tx.transactionHash}"
-              target="_blank"
-              rel="noreferrer"
-              class="!dark:text-success-500 !text-success-800"
-            >
-              <dd>View on block explorer</dd>
-            </a>
-            <dt class="opacity-50">Gas Used:</dt>
-            <dd>${tx.gasUsed.toLocaleString()}</dd>
-          </dl>
-          </details>
-        `,
-        background: 'variant-glass-surface ring-2 ring-inset dark:ring-success-700 ring-success-700',
-        autohide: false,
-        classes: '-translate-y-4 font-semibold',
-      };
-      toastStore.trigger(t)
-    } else {
-      console.log(tx.rawLog)
-			const t: ToastSettings = {
-				message: `
-				<h4>Transaction Failed</h4>
-				<details class="text-sm">
-					<summary>Details</summary>
-					<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-						<dt class="opacity-50">Raw Log:</dt>
-						<dd>${tx.rawLog}</dd>
-					</dl>
-				</details>
-				`,
-				background: 'variant-glass-surface ring-2 ring-inset ring-error-500',
-				autohide: false,
-				classes: '-translate-y-4 font-semibold',
-			};
-			toastStore.trigger(t)
-    }
+    responseToast(tx);
   } catch (error) {
-    const t: ToastSettings = {
-			message: `
-			<h4>Something went wrong 🤔</h4>
-			<details class="text-sm">
-				<summary>Details</summary>
-				<dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
-					<dt class="opacity-50">Action:</dt>
-					<dd>Execute</dd>
-					<dt class="opacity-50">Message:</dt>
-					<dd class="text-error-700 dark:text-error-500">${error.message}</dd>
-				</dl>
-			</details>
-			`,
-			background: 'variant-glass-surface ring-2 ring-inset ring-secondary-500',
-			autohide: false,
-			classes: '-translate-y-4 font-semibold',
-		};
-		toastStore.trigger(t)
+    errorToast(error);
   }
 }

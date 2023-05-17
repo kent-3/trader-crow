@@ -1,5 +1,5 @@
 import type { SecretNetworkClient } from "secretjs";
-import type { CustomToken, NativeToken } from '../misc_types'
+import type { CustomToken } from '../misc_types'
 import { LB_FACTORY } from "$lib/contracts";
 import type * as LBFactory from "./types"
 

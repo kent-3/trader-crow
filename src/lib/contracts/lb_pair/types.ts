@@ -1,4 +1,4 @@
-import type { CustomToken, NativeToken, TokenType } from '../misc_types'
+import type { TokenType } from '../misc_types'
 
 export interface ContractInfo {
   address: string,
@@ -220,7 +220,7 @@ export interface GetSwapOutQuery {
 }
 export interface GetTotalSupplyQuery {
   total_supply: {
-  id:number
+    id: number
   };
 }
 export interface FactoryResponse {

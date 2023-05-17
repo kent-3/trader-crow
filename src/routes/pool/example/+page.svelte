@@ -3,13 +3,16 @@
     import { Tab, TabGroup } from '@skeletonlabs/skeleton';
     import DoubleRangeSlider from '$lib/DoubleRangeSlider.svelte';
 	import { setupKeplr } from '$lib/keplr'
-    import { secretClient, isAccountAvailable } from '$lib/stores';
+    import { secretClient, isAccountAvailable, secretAddress, viewingKeys } from '$lib/stores';
     import { tokenList } from '$lib/tokens';
     import { spotUniform, curve, bidAsk } from '$lib/joe-sdk/constants'
     import { getIdFromPrice } from '$lib/utils';
     import type { CustomToken, TokenType } from '$lib/contracts/misc_types';
     import { queryLBPairInformation } from '$lib/contracts/lb_factory';
     import { executeAddLiquidity, executeRemoveLiquidity } from '$lib/contracts/lb_pair';
+    import { onMount } from "svelte";
+    import { getAllowance } from "$lib/snip20";
+    import { MsgSnip20IncreaseAllowance } from "secretjs";
 
     let start = 0.45;
     let end = 0.56;
@@ -24,8 +27,43 @@
         return d.toFixed(2);
     }
 
+    // fixed pair info
     let _tokenX = tokenList.find((token) => token.symbol === "sSCRT");
     let _tokenY = tokenList.find((token) => token.symbol === "SILK");
+    let binStep = 100;
+
+    const tokenX: CustomToken = {
+          custom_token: {
+            contract_addr: _tokenX!.address,
+            token_code_hash: _tokenX!.codeHash,
+          }
+        };
+
+    const tokenY: CustomToken = {
+        custom_token: {
+        contract_addr: _tokenY!.address,
+        token_code_hash: _tokenY!.codeHash,
+        }
+    };
+
+    let pairAddress: string | undefined;
+    let pairHash: string | undefined;
+
+    onMount(async () => {
+        // TODO have a better way of knowing the LBPair contract info
+        const { 
+            lb_pair_information: { 
+                lb_pair: { 
+                    contract: { 
+                        address: contractAddressPair, 
+                        code_hash: contractHashPair 
+                    } 
+                } 
+            } 
+        } =  await queryLBPairInformation($secretClient, tokenX, tokenY, 100);
+        pairAddress = contractAddressPair;
+        pairHash = contractHashPair;
+    })
 
     let inputX: number;
     let inputY: number;
@@ -33,34 +71,99 @@
     $: amountX = inputX * (10 ** _tokenX!.decimals)
     $: amountY = inputY * (10 ** _tokenY!.decimals)
 
+    // sends a query every time the input changes (not great)
+	$: {
+		if (amountX && $secretAddress && $viewingKeys && $isAccountAvailable) {
+			checkAllowanceX();
+		} 
+	}
+    $: {
+		if (amountY && $secretAddress && $viewingKeys && $isAccountAvailable) {
+			checkAllowanceY();
+		} 
+	}
+
+    let allowanceX: string = "0";
+    let allowanceY: string = "0";
+    
+    async function checkAllowanceX() {
+		allowanceX = await getAllowance($secretClient, _tokenX!, $secretAddress, pairAddress!, $viewingKeys.get(_tokenX!.address)!);
+        console.log("token X allowance", allowanceX);
+	}
+	async function checkAllowanceY() {
+		allowanceY = await getAllowance($secretClient, _tokenY!, $secretAddress, pairAddress!, $viewingKeys.get(_tokenY!.address)!);
+        console.log("token Y allowance", allowanceY);
+	}
+
     // TODO: match shape number to liquidity configuration
     let shape = 0;
     let binRadius = 5;
     let price = 1;
-    let binStep = 100;
 
     let tabSet: number = 0;
     let tabSetBy: number = 0;
-	
 
 	// $: activeId = getIdFromPrice(parseFloat(activePrice), parseInt(binStep))
 	// $: logActiveId = console.log("active bin id: ", activeId);
 
+    async function _increaseAllowance() {
+
+        const msg1 = new MsgSnip20IncreaseAllowance(
+            {
+                sender: $secretClient.address,
+                contract_address: _tokenX!.address,
+                code_hash: _tokenX!.codeHash,
+                msg: {
+                    increase_allowance: {
+                    spender: pairAddress!,
+                    amount: amountX.toString(),
+                    }
+                }
+            },
+        )
+
+        const msg2 = new MsgSnip20IncreaseAllowance(
+            {
+                sender: $secretClient.address,
+                contract_address: _tokenY!.address,
+                code_hash: _tokenY!.codeHash,
+                msg: {
+                    increase_allowance: {
+                    spender: pairAddress!,
+                    amount: amountX.toString(),
+                    }
+                }
+            },
+        )
+
+        const tx1 = await $secretClient.tx.broadcast(
+            [ msg1 ],
+            {
+                gasLimit: 100_000,
+            }
+        );
+
+        if (tx1.code !== 0) {
+            throw new Error(
+                `Failed with the following error:\n ${tx1.rawLog}`
+            );
+        }
+
+        const tx2 = await $secretClient.tx.broadcast(
+            [ msg2 ],
+            {
+                gasLimit: 100_000,
+            }
+        );
+
+        if (tx2.code !== 0) {
+            throw new Error(
+                `Failed with the following error:\n ${tx2.rawLog}`
+            );
+        }
+    }
+
     async function addLiquidity() {
-        const tokenX: CustomToken = {
-          custom_token: {
-            contract_addr: _tokenX!.address,
-            token_code_hash: _tokenX!.codeHash,
-          }
-        };
-
-        const tokenY: CustomToken = {
-          custom_token: {
-            contract_addr: _tokenY!.address,
-            token_code_hash: _tokenY!.codeHash,
-          }
-        };
-
         // TODO have a better way of knowing the LBPair contract info
         const { 
             lb_pair_information: { 
@@ -87,20 +190,6 @@
     }
 
     async function removeLiquidity() {
-        const tokenX: CustomToken = {
-          custom_token: {
-            contract_addr: _tokenX!.address,
-            token_code_hash: _tokenX!.codeHash,
-          }
-        };
-
-        const tokenY: CustomToken = {
-          custom_token: {
-            contract_addr: _tokenY!.address,
-            token_code_hash: _tokenY!.codeHash,
-          }
-        };
-
         // TODO have a better way of knowing the LBPair contract info
         const { 
             lb_pair_information: { 
@@ -258,7 +347,7 @@
                 {#if tabSetBy == 0}
                 <div class="flex flex-col space-y-4">
                     <DoubleRangeSlider bind:start bind:end/>
-                    <div class="grid sm:grid-cols-[minmax(0,_1fr)_minmax(0,_1fr)_90px] grid-rows-[minmax(0,_1fr)_minmax(0,_1fr)_90px] gap-2">
+                    <div class="grid sm:grid-cols-[minmax(0,_1fr)_minmax(0,_1fr)_90px] sm:grid-rows-none grid-rows-[minmax(0,_1fr)_minmax(0,_1fr)_90px] gap-2">
                         <div class="flex flex-col justify-start space-y-2">
                             <p>Min Price:</p>
                             <div class="input-group input-group-divider grid-cols-[1fr_105px] !bg-surface-50-900-token font-heading-token text-secondary-600-300-token font-bold">
@@ -328,9 +417,15 @@
                         Connect Wallet
                     </button>
                 {:else}
-                    <button on:click={()=>addLiquidity()} class="btn w-full variant-ghost-secondary mt-4 font-heading-token font-bold">
-                        Add Liquidity
-                    </button>
+                    {#if allowanceX == "0" || allowanceY == "0"}
+                        <button on:click={()=>_increaseAllowance()} class="btn w-full variant-ghost-secondary mt-4 font-heading-token font-bold">
+                            Increase Allowance
+                        </button>
+                    {:else}
+                        <button on:click={()=>addLiquidity()} class="btn w-full variant-ghost-secondary mt-4 font-heading-token font-bold">
+                            Add Liquidity
+                        </button>
+                    {/if}
                 {/if}
             </div>
             {:else if tabSet === 1}

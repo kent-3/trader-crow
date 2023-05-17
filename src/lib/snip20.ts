@@ -29,6 +29,34 @@ export async function increaseAllowance(
       `Failed with the following error:\n ${tx.rawLog}`
     );
   }
+}
+
+export async function getAllowance(
+  client: SecretNetworkClient,
+  token: Token,
+  owner: string,
+  spender: string,
+  auth: string,
+): Promise<string> {
+  try {
+    const snip20Response = await client.query.snip20.GetAllowance({
+      contract: {
+        address: token.address,
+        code_hash: token.codeHash,
+      },
+      owner: owner,
+      spender: spender,
+      auth: {
+        key: auth,
+      }
+    })
+    const allowance = ((parseInt(snip20Response.allowance.allowance)) / 10 ** token.decimals).toString();
+    return allowance;
+
+  } catch (error) {
+      console.log(error);
+      return "0";
+  }
 
 }
 
@@ -49,7 +77,7 @@ export async function getBalance(
         key: auth,
       }
     })
-    const balance = Number((parseInt(snip20Response.balance.amount)) / 10 ** token.decimals).toString();
+    const balance = ((parseInt(snip20Response.balance.amount)) / 10 ** token.decimals).toString();
     return balance;
 
   } catch (error) {

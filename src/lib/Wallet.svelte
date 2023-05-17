@@ -74,18 +74,18 @@
   export async function connect() {
     // resetStores()
     await setupKeplr();
-    await getViewingKeys(tokenList);
+    await getViewingKeys();
     await getBalances();
   }
 
-  async function getViewingKeys(tokens: Token[]) {
-    for (const token of tokens) {
+  async function getViewingKeys() {
+    for (const token of tokenList) {
       const key = await getKeplrViewingKey(token.address);
       if (key != null) {
         viewingKeys.update((map) => map.set(token.address, key));
       }
     }
-    console.log($viewingKeys);
+    console.log("refreshed viewing keys");
   }
 
   let balanceX: string | undefined;
@@ -163,7 +163,7 @@
     <button
       class="btn font-bold font-heading-token variant-ghost-secondary pr-6"
       use:popup={popupSettings}
-      on:click={() => getBalances()}
+      on:click={() => {getViewingKeys(); getBalances();}}
     >
       <svg
         viewBox="0 0 21 18"

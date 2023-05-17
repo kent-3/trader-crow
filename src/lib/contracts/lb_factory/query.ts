@@ -80,6 +80,6 @@ export async function queryLBPairInformation(
     query: getAllLBPairsQuery,
   })) as LBFactory.LBPairInformationResponse;
 
-  console.log(JSON.stringify(response));
+  console.log(`LBPair address: ${response.lb_pair_information.lb_pair.contract.address}`);
   return response;
 }

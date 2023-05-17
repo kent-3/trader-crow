@@ -2,6 +2,7 @@ import type { SecretNetworkClient } from "secretjs";
 import type { CustomToken } from "../misc_types";
 import type * as LBPair from "./types"
 import { errorToast, responseToast } from '$lib/toasts';
+import { doneLoading, setLoading } from "$lib/modals";
 // import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
 
 // const alert: ModalSettings = {
@@ -51,6 +52,7 @@ export async function executeAddLiquidity(
   };
 
   try {
+    setLoading();
     const tx = await client.tx.compute.executeContract(
       {
         sender: client.address,
@@ -63,6 +65,7 @@ export async function executeAddLiquidity(
         gasLimit: 2_000_000,
       }
     );
+    doneLoading();
     responseToast(tx);
   } catch (error) {
     errorToast(error);
@@ -96,6 +99,7 @@ export async function executeRemoveLiquidity(
   };
 
   try {
+    setLoading();
     const tx = await client.tx.compute.executeContract(
       {
         sender: client.address,
@@ -108,6 +112,7 @@ export async function executeRemoveLiquidity(
         gasLimit: 2_000_000,
       }
     );
+    doneLoading();
     responseToast(tx);
   } catch (error) {
     errorToast(error);
@@ -130,6 +135,7 @@ export async function executeSwap(
   }
 
   try {
+    setLoading();
     const tx = await client.tx.compute.executeContract(
       {
         sender: client.address,
@@ -142,9 +148,10 @@ export async function executeSwap(
         gasLimit: 2_000_000,
       }
     );
-
+    doneLoading();
     responseToast(tx);
   } catch (error) {
     errorToast(error);
+    doneLoading();
   }
 }

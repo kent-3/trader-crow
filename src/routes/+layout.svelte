@@ -34,9 +34,10 @@
   max=6
 />
 <Modal
-  width=""
+  width="w-modal-slim"
   regionBody="max-h-[440px]"
-  regionBackdrop="bg-surface-backdrop-token"
+  regionBackdrop="bg-surface-backdrop-token backdrop-blur-sm"
+  regionHeader="font-heading-token"
 />
 <!-- App Shell -->
 <AppShell>

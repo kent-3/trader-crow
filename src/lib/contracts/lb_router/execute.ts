@@ -2,6 +2,7 @@ import type { SecretNetworkClient } from "secretjs";
 import type * as LBFactory from "../lb_factory/types"
 import { LB_ROUTER } from "$lib/contracts"
 import { errorToast, responseToast } from "$lib/toasts";
+import { doneLoading, setLoading } from "$lib/modals";
 
 export async function executeCreateLBPair(
   client: SecretNetworkClient,
@@ -32,6 +33,7 @@ export async function executeCreateLBPair(
   }
 
   try {
+    setLoading();
     const tx = await client.tx.compute.executeContract(
       {
         sender: client.address,
@@ -44,6 +46,7 @@ export async function executeCreateLBPair(
         gasLimit: 500_000,
       }
     );
+    doneLoading();
     responseToast(tx);
   } catch (error) {
     errorToast(error);

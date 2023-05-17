@@ -82,12 +82,12 @@
 
   // sends a query every time the input changes (not great)
   $: {
-    if (amountX && $secretAddress && $viewingKeys && $isAccountAvailable) {
+    if (amountX) {
       checkAllowanceX();
     }
   }
   $: {
-    if (amountY && $secretAddress && $viewingKeys && $isAccountAvailable) {
+    if (amountY) {
       checkAllowanceY();
     }
   }
@@ -103,7 +103,7 @@
       pairAddress!,
       $viewingKeys.get(_tokenX!.address)!
     );
-    console.log("token X allowance", allowanceX);
+    console.log(`Current ${_tokenX?.symbol} allowance: ${allowanceX}`);
   }
 
   async function checkAllowanceY() {
@@ -114,7 +114,7 @@
       pairAddress!,
       $viewingKeys.get(_tokenY!.address)!
     );
-    console.log("token Y allowance", allowanceY);
+    console.log(`Current ${_tokenY?.symbol} allowance: ${allowanceY}`);
   }
 
   // TODO: match shape number to liquidity configuration

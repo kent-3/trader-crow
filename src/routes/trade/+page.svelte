@@ -2,65 +2,65 @@
 	import { fade, fly } from "svelte/transition";
 	import { Accordion, AccordionItem } from '@skeletonlabs/skeleton';
 	import { isAccountAvailable, secretClient, secretAddress, viewingKeys } from '$lib/stores';
-	import { setupKeplr } from '$lib/keplr'
+	import { setupKeplr, getKeplrViewingKey } from '$lib/keplr'
 	import { tokenList, type Token } from '$lib/tokens';
+	import { getBalance, increaseAllowance } from "$lib/snip20";
 	import type { CustomToken } from '$lib/contracts/misc_types';
 	import { executeSwap } from "$lib/contracts/lb_pair";
 	import { queryLBPairInformation } from "$lib/contracts/lb_factory";
 
 	let routeFound = true;
 
-	let tokenX: string = "TOKENX";
-	let tokenY: string = "TOKENY";
+	let tokenX: string = "sSCRT";
+	let tokenY: string = "SILK";
 
-	let swapForY: boolean = true;
-
-    $: selectedtokenX = tokenList.find((token) => token.symbol === tokenX);
-	$: selectedtokenY = tokenList.find((token) => token.symbol === tokenY);
-
+    $: selectedTokenX = tokenList.find((token) => token.symbol === tokenX);
+	$: selectedTokenY = tokenList.find((token) => token.symbol === tokenY);
+	
 	let amountX: number;
 	let amountY: number;
 
+	let balanceX: string | undefined;
+	let balanceY: string | undefined;
+
+	let swapForY: boolean = true;
+
 	$: amount = swapForY
-		? (amountX * 10 ** selectedtokenX!.decimals).toString()
-		: (amountY * 10 ** selectedtokenY!.decimals).toString()
-		
-	$: testing = console.log(amount);
+		? (amountX * 10 ** selectedTokenX!.decimals).toString()
+		: (amountY * 10 ** selectedTokenY!.decimals).toString()
 
-	// $: balanceX = getBalance(selectedtokenX);
-	// $: balanceY = getBalance(selectedtokenY);
+	async function checkBalanceX() {
+		balanceX = await getBalance($secretClient, selectedTokenX!, $secretAddress, $viewingKeys.get(selectedTokenX!.address)!);
+	}
+	async function checkBalanceY() {
+		balanceY = await getBalance($secretClient, selectedTokenY!, $secretAddress, $viewingKeys.get(selectedTokenY!.address)!);
+	}
 
-	// TODO still working on this
-	// async function getSnip20Balance(token: Token) {
-		// try {
-		// 	const snip20Response = await $secretClient.query.snip20.getBalance({
-		// 		contract: {
-		// 			address: token.address,
-		// 			code_hash: token.codeHash
-		// 		},
-		// 		address: $secretAddress,
-		// 		auth: {
-		// 			key: $viewingKeys.get(token.address)
-		// 		}
-		// 	})
-		// 	let balance = Number((snip20Response.balance.amount as any) / 1e6).toString()
-		// } catch (error) {
-		// 	console.log(`No viewing key for SNIP20`)
-		// }
-	// }
+	// Watch for changes in selectedTokens, secretClient, secretAddress, or viewingKeys and trigger updateBalance() when they change
+	$: {
+		if (selectedTokenX && $secretClient && $secretAddress && $viewingKeys && $isAccountAvailable) {
+			checkBalanceX();
+		} 
+	}
+
+	$: {
+		if (selectedTokenY && $secretClient && $secretAddress && $viewingKeys) {
+			checkBalanceY();
+		}
+	}
 
     async function swap() {
         const tokenX: CustomToken = {
           custom_token: {
-            contract_addr: selectedtokenX!.address,
-            token_code_hash: selectedtokenX!.codeHash,
+            contract_addr: selectedTokenX!.address,
+            token_code_hash: selectedTokenX!.codeHash,
           }
         };
 
         const tokenY: CustomToken = {
           custom_token: {
-            contract_addr: selectedtokenY!.address,
-            token_code_hash: selectedtokenY!.codeHash,
+            contract_addr: selectedTokenY!.address,
+            token_code_hash: selectedTokenY!.codeHash,
           }
         };
 
@@ -98,13 +98,11 @@
 		<div class="space-y-2">
 			<div class="flex justify-between">
 				<h2 class=" !text-base">Token X</h2>
-				<button class="btn btn-sm py-0 px-2 hover:bg-secondary-500/20">Balance: 👀</button>
+				<button class="btn btn-sm py-0 px-2 hover:bg-secondary-500/20 text-ellipsis">Balance: {balanceX ?? '👀'}</button>
 			</div>
 			<div class="flex justify-between space-x-2">
 				<input bind:value={amountX} disabled={!swapForY} class="input !bg-surface-50-900-token font-heading-token text-primary-900-50-token placeholder:text-primary-900-50-token/50 font-bold" type="number" name="" id="" placeholder="0.0"/>
 				<select bind:value={tokenX} class="select w-36 !bg-surface-50-900-token font-heading-token text-primary-900-50-token placeholder:text-primary-900-50-token/50 font-bold" title="Select Token">
-					<option value="TOKENX">TOKEN X</option>
-					<option value="TOKENY">TOKEN Y</option>
 					<option value="sSCRT">sSCRT</option>
 					<option value="stkd-SCRT">stkd-SCRT</option>
 					<option value="SHD">SHD</option>
@@ -121,13 +119,11 @@
 		<div class="space-y-2">
 			<div class="flex justify-between">
 				<h2 class="!text-base">Token Y</h2>
-				<button class="btn btn-sm py-0 px-2 hover:bg-secondary-500/20">Balance: 👀</button>
+				<button class="btn btn-sm py-0 px-2 hover:bg-secondary-500/20 text-ellipsis">Balance: {balanceY ?? '👀'}</button>
 			</div>
 			<div class="flex justify-between space-x-2">
 				<input bind:value={amountY} disabled={swapForY} class="input !bg-surface-50-900-token font-heading-token text-primary-900-50-token placeholder:text-primary-900-50-token/50 font-bold" type="text" name="" id="" placeholder="0.0"/>
 				<select bind:value={tokenY} class="select w-36 !bg-surface-50-900-token font-heading-token text-primary-900-50-token placeholder:text-primary-900-50-token/50 font-bold" title="Select Token" id="to-token">
-					<option value="TOKENX">TOKEN X</option>
-					<option value="TOKENY">TOKEN Y</option>
 					<option value="sSCRT">sSCRT</option>
 					<option value="stkd-SCRT">stkd-SCRT</option>
 					<option value="SHD">SHD</option>

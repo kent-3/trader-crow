@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte'
 	import { setupKeplr, getKeplrViewingKey, disconnectKeplr } from '$lib/keplr'
 	import { chains } from '$lib/config'
-	import type { Token } from '$lib/tokens'
+	import { tokenList, type Token } from '$lib/tokens'
 	import { compactAddress } from '$lib/utils'
 	import {
 		resetStores,
@@ -78,7 +78,7 @@
 	export async function connect() {
 		// resetStores()
 		await setupKeplr()
-		// await getViewingKeys(tokenList)
+		await getViewingKeys(tokenList)
 		await getBalances()
 	}
 
@@ -89,6 +89,7 @@
 				viewingKeys.update(map => map.set(token.address, key))
 			}
 		}
+		console.log($viewingKeys)
 	}
 	
 	async function getBalances() {

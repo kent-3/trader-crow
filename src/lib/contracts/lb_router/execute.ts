@@ -55,7 +55,7 @@ export async function executeCreateLBPair(
           <dl class="font-mono grid grid-cols-[5rem_minmax(0,_2fr)]">
             <dt class="opacity-50">Tx Hash:</dt>
             <a
-              href="https://www.mintscan.io/secret/txs/${tx.transactionHash}"
+              href="https://secretnodes.com/pulsar/transactions/${tx.transactionHash}"
               target="_blank"
               rel="noreferrer"
               class="!dark:text-success-500 !text-success-800"

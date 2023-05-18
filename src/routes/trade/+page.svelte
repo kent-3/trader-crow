@@ -18,6 +18,7 @@
 
   let tokenX: string = "sSCRT";
   let tokenY: string = "SILK";
+  let binStep: number = 25;
 
   $: selectedTokenX = tokenList.find((token) => token.symbol === tokenX);
   $: selectedTokenY = tokenList.find((token) => token.symbol === tokenY);
@@ -90,7 +91,7 @@
           },
         },
       },
-    } = await queryLBPairInformation($secretClient, tokenX, tokenY, 100);
+    } = await queryLBPairInformation($secretClient, tokenX, tokenY, binStep);
 
     // TODO allow inputs for amounts, liquidity config, etc.
     await executeSwap(

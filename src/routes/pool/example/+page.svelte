@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
-  import { Tab, TabGroup } from "@skeletonlabs/skeleton";
+  import { Tab, TabGroup, toastStore } from "@skeletonlabs/skeleton";
   import DoubleRangeSlider from "$lib/DoubleRangeSlider.svelte";
   import { setupKeplr } from "$lib/keplr";
   import {
@@ -17,11 +17,53 @@
   import {
     executeAddLiquidity,
     executeRemoveLiquidity,
+    queryActiveId,
+    queryBin,
+    queryNextNonEmptyBin,
+    queryReserves,
+    queryTotalSupply,
   } from "$lib/contracts/lb_pair";
+  import type {
+    ReservesResponse,
+    ActiveIdResponse,
+    BinResponse,
+    NextNonEmptyBinResponse,
+    TotalSupplyResponse,
+  } from "$lib/contracts/lb_pair/types";
   import { onMount } from "svelte";
   import { getAllowance } from "$lib/snip20";
   import { MsgSnip20IncreaseAllowance } from "secretjs";
   import { errorToast, responseToast } from "$lib/toasts";
+
+  // Query Responses
+  let reserves: ReservesResponse,
+    activeId: ActiveIdResponse,
+    id: number,
+    bin: BinResponse,
+    nextNonEmptyBin: NextNonEmptyBinResponse,
+    totalSupply: TotalSupplyResponse,
+    queryResponse: object,
+    queryBinResponse: object;
+
+  async function _queryReserves() {
+    queryResponse = await queryReserves($secretClient, contractHashPair!, contractAddressPair!)
+  }
+
+  async function _queryActiveId() {
+    queryResponse = await queryActiveId($secretClient, contractHashPair!, contractAddressPair!)
+  }
+
+  async function _queryBin() {
+    queryBinResponse = await queryBin($secretClient, contractHashPair!, contractAddressPair!, id)
+  }
+
+  async function _queryNextNonEmptyBin() {
+    queryBinResponse = await queryNextNonEmptyBin($secretClient, contractHashPair!, contractAddressPair!, id)
+  }
+
+  async function _queryTotalSupply() {
+    queryBinResponse = await queryTotalSupply($secretClient, contractHashPair!, contractAddressPair!, id)
+  }
 
   let start = 0.45;
   let end = 0.56;
@@ -55,8 +97,8 @@
     },
   };
 
-  let pairAddress: string | undefined;
-  let pairHash: string | undefined;
+  let contractAddressPair: string | undefined;
+  let contractHashPair: string | undefined;
 
   onMount(async () => {
     // TODO have a better way of knowing the LBPair contract info
@@ -64,14 +106,15 @@
       lb_pair_information: {
         lb_pair: {
           contract: {
-            address: contractAddressPair,
-            code_hash: contractHashPair,
+            address: contract_address_air,
+            code_hash: contract_hash_pair,
           },
         },
       },
-    } = await queryLBPairInformation($secretClient, tokenX, tokenY, 100);
-    pairAddress = contractAddressPair;
-    pairHash = contractHashPair;
+    } = await queryLBPairInformation($secretClient, tokenX, tokenY, binStep);
+    // LBPair address should be secret10lsnx5n6hxc37cfxnhkmp6t2sjfh3s9jheqg64
+    contractAddressPair = contract_address_air;
+    contractHashPair = contract_hash_pair;
   });
 
   let inputX: number;
@@ -100,7 +143,7 @@
       $secretClient,
       _tokenX!,
       $secretAddress,
-      pairAddress!,
+      contractAddressPair!,
       $viewingKeys.get(_tokenX!.address)!
     );
     console.log(`Current ${_tokenX?.symbol} allowance: ${allowanceX}`);
@@ -111,7 +154,7 @@
       $secretClient,
       _tokenY!,
       $secretAddress,
-      pairAddress!,
+      contractAddressPair!,
       $viewingKeys.get(_tokenY!.address)!
     );
     console.log(`Current ${_tokenY?.symbol} allowance: ${allowanceY}`);
@@ -135,7 +178,7 @@
       code_hash: _tokenX!.codeHash,
       msg: {
         increase_allowance: {
-          spender: pairAddress!,
+          spender: contractAddressPair!,
           amount: amountX.toString(),
         },
       },
@@ -147,7 +190,7 @@
       code_hash: _tokenY!.codeHash,
       msg: {
         increase_allowance: {
-          spender: pairAddress!,
+          spender: contractAddressPair!,
           amount: amountY.toString(),
         },
       },
@@ -174,7 +217,7 @@
           },
         },
       },
-    } = await queryLBPairInformation($secretClient, tokenX, tokenY, 100);
+    } = await queryLBPairInformation($secretClient, tokenX, tokenY, binStep);
 
     // TODO allow inputs for amounts, liquidity config, etc.
     await executeAddLiquidity(
@@ -200,7 +243,7 @@
           },
         },
       },
-    } = await queryLBPairInformation($secretClient, tokenX, tokenY, 100);
+    } = await queryLBPairInformation($secretClient, tokenX, tokenY, binStep);
 
     // TODO allow inputs for amounts, liquidity config, etc.
     await executeRemoveLiquidity(
@@ -222,8 +265,23 @@
   <div
     class="card variant-ghost-surface xl:w-[49%] w-full h-full px-8 py-6 items-center space-y-6"
   >
-    <h2 class="font-semibold !text-3xl text-center">Manage Liquidity</h2>
-    <p>Nothing to see here yet 😓</p>
+    <h2 class="font-semibold !text-3xl text-center">Pair Queries</h2>
+
+    <div class="flex flex-row justify-evenly">
+      <button on:click={()=>_queryReserves()} class="btn btn-sm variant-filled-primary">Query Total Reserves</button>
+      <button on:click={()=>_queryActiveId()} class="btn btn-sm variant-filled-primary">Query Active ID</button>
+    </div>
+    <pre>{JSON.stringify(queryResponse,null,4) ?? '...'}</pre>
+    <div class="flex space-x-4 items-center">
+      <p>Bin ID: </p>
+      <input bind:value={id} type="number" class="input w-36" placeholder="0">
+    </div>
+    <div class="flex flex-row flex-wrap gap-y-4 justify-evenly">
+      <button on:click={()=>_queryBin()} class="btn btn-sm variant-filled-primary">Query Bin</button>
+      <button on:click={()=>_queryNextNonEmptyBin()} class="btn btn-sm variant-filled-primary">Query Next Non-Empty Bin</button>
+      <button on:click={()=>_queryTotalSupply()} class="btn btn-sm variant-filled-primary">Query Total Supply</button>
+    </div>
+    <pre>{JSON.stringify(queryBinResponse,null,4) ?? '...'}</pre>
   </div>
   <div class="card xl:w-[49%] w-full h-auto px-8 py-6 items-center space-y-6">
     <TabGroup
@@ -830,7 +888,7 @@
                 on:click={() => _increaseAllowance()}
                 class="btn w-full variant-ghost-secondary mt-4 font-heading-token font-bold"
               >
-                Increase Allowance
+                Increase Allowances
               </button>
             {:else}
               <button

@@ -18,7 +18,7 @@
 
   let tokenX: string = "sSCRT";
   let tokenY: string = "SILK";
-  let binStep: number = 25;
+  let binStep: number = 100;
 
   $: selectedTokenX = tokenList.find((token) => token.symbol === tokenX);
   $: selectedTokenY = tokenList.find((token) => token.symbol === tokenY);

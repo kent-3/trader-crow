@@ -34,6 +34,9 @@
   import { getAllowance } from "$lib/snip20";
   import { MsgSnip20IncreaseAllowance } from "secretjs";
   import { errorToast, responseToast } from "$lib/toasts";
+  import { doneLoading, setLoading } from "$lib/modals";
+
+  const sleep = () => new Promise((resolve) => setTimeout(resolve, 3000))
 
   // Query Responses
   let reserves: ReservesResponse,
@@ -112,25 +115,26 @@
         },
       },
     } = await queryLBPairInformation($secretClient, tokenX, tokenY, binStep);
-    // LBPair address should be secret10lsnx5n6hxc37cfxnhkmp6t2sjfh3s9jheqg64
+    // LBPair address should be secret1pdn37sf2sfmsce9zrlxh3zhm4fa8cly5glrlga
     contractAddressPair = contract_address_air;
     contractHashPair = contract_hash_pair;
   });
 
   let inputX: number;
   let inputY: number;
+  let update: number = 0;
 
   $: amountX = inputX * 10 ** _tokenX!.decimals;
   $: amountY = inputY * 10 ** _tokenY!.decimals;
 
   // sends a query every time the input changes (not great)
   $: {
-    if (amountX) {
+    if (amountX && update) {
       checkAllowanceX();
     }
   }
   $: {
-    if (amountY) {
+    if (amountY && update) {
       checkAllowanceY();
     }
   }
@@ -197,13 +201,21 @@
     });
 
     try {
+      setLoading();
       const tx = await $secretClient.tx.broadcast([msg1, msg2], {
         gasLimit: 100_000,
       });
       responseToast(tx);
+      doneLoading();
     } catch (error) {
       errorToast(error);
+      doneLoading();
     }
+
+    console.log("sleep start")
+    await sleep();
+    console.log("sleep end")
+    update++
   }
 
   async function addLiquidity() {
@@ -263,7 +275,7 @@
 >
   <!-- <h2 class="font-semibold !text-3xl self-center">Manage Liquidity</h2> -->
   <div
-    class="card variant-ghost-surface xl:w-[49%] w-full h-full px-8 py-6 items-center space-y-6"
+    class="card variant-ghost-surface xl:w-[49%] md:w-[90%] w-full h-full px-8 py-6 items-center space-y-6"
   >
     <h2 class="font-semibold !text-3xl text-center">Pair Queries</h2>
 
@@ -283,7 +295,7 @@
     </div>
     <pre>{JSON.stringify(queryBinResponse,null,4) ?? '...'}</pre>
   </div>
-  <div class="card xl:w-[49%] w-full h-auto px-8 py-6 items-center space-y-6">
+  <div class="card xl:w-[49%] md:w-[90%] w-full h-auto px-8 py-6 items-center space-y-6">
     <TabGroup
       justify="justify-evenly"
       active="variant-ghost-secondary"

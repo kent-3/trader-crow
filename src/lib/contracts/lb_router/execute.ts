@@ -50,5 +50,6 @@ export async function executeCreateLBPair(
     responseToast(tx);
   } catch (error) {
     errorToast(error);
+    doneLoading();
   }
 }

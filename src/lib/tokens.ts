@@ -12,7 +12,7 @@ export interface Token {
 export const tokenList: Array<Token> = [
   // token X for testing
   {
-    address: 'secret15yd3meqyvt0qmvetawyuepsugqperpvd4hfxp8',
+    address: 'secret1fca000tzhltleaq4m6aymxqsez454sugxjfss9',
     codeHash: '0bbaa17a6bd4533f5dc3eae14bfd1152891edaabcc0d767f611bb70437b3a159',
     name: 'token x',
     symbol: 'TOKENX',
@@ -21,7 +21,7 @@ export const tokenList: Array<Token> = [
   },
   // token Y for testing (this is the quote asset that needs to be whitelisted)
   {
-    address: 'secret1heu7gvxvlc9kkg535rpakq0pqnv8f4v3dw0ps2',
+    address: 'secret1acvjct6kkaxpzpw895xuxhus0vfmk4kurfupma',
     codeHash: '0bbaa17a6bd4533f5dc3eae14bfd1152891edaabcc0d767f611bb70437b3a159',
     name: 'token y',
     symbol: 'TOKENY',

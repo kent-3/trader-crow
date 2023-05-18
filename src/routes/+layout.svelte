@@ -36,7 +36,7 @@
 <Modal
   width="w-modal-slim"
   regionBody="max-h-[440px]"
-  regionBackdrop="bg-surface-backdrop-token backdrop-blur-sm"
+  regionBackdrop="bg-surface-backdrop-token backdrop-blur-[2px]"
   regionHeader="font-heading-token"
 />
 <!-- App Shell -->
@@ -56,7 +56,7 @@
           rel="noopener noreferrer"
         >
           <svg
-            class="fill-primary-400 md:h-6 h-10 pr-2"
+            class="fill-primary-400 md:h-8 h-10 pr-2"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 640 512"
             ><!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path

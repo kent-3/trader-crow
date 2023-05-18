@@ -69,6 +69,7 @@ export async function executeAddLiquidity(
     responseToast(tx);
   } catch (error) {
     errorToast(error);
+    doneLoading();
   }
 }
 
@@ -116,6 +117,7 @@ export async function executeRemoveLiquidity(
     responseToast(tx);
   } catch (error) {
     errorToast(error);
+    doneLoading();
   }
 }
 

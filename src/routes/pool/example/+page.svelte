@@ -122,7 +122,7 @@
 
   let inputX: number;
   let inputY: number;
-  let update: number = 0;
+  let update: number = 1;
 
   $: amountX = inputX * 10 ** _tokenX!.decimals;
   $: amountY = inputY * 10 ** _tokenY!.decimals;
@@ -212,9 +212,7 @@
       doneLoading();
     }
 
-    console.log("sleep start")
     await sleep();
-    console.log("sleep end")
     update++
   }
 
